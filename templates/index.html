@@ -6,10 +6,34 @@
 </head>
 <body>
     <h1>Object Detection App</h1>
-    <form action="/api/detect" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*">
+    <form id="upload-form" action="/api/detect" method="post" enctype="multipart/form-data">
+        <input type="file" id="image-input" accept="image/*">
         <input type="submit" value="Detect Objects">
     </form>
-    <!-- TODO: Display detected objects here -->
+    <div id="image-container">
+        <img id="detected-image" src="" alt="Detected Image">
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('upload-form');
+        const imageInput = document.getElementById('image-input');
+        const detectedImage = document.getElementById('detected-image');
+
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+
+            fetch('/api/detect', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                detectedImage.src = url;
+            });
+        });
+    </script>
 </body>
 </html>
