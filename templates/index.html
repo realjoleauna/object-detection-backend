@@ -3,37 +3,122 @@
 <html>
 <head>
     <title>Object Detection App</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            max-width: 50%;
+        }
+
+        .canvas-container {
+            position: relative;
+            max-width: 50%;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
     <h1>Object Detection App</h1>
-    <form id="upload-form" action="/api/detect" method="post" enctype="multipart/form-data">
+    <form id="upload-form" enctype="multipart/form-data">
         <input type="file" id="image-input" accept="image/*">
-        <input type="submit" value="Detect Objects">
+        <input type="button" value="Detect Objects" onclick="detectObjects()">
     </form>
-    <div id="image-container">
-        <img id="detected-image" src="" alt="Detected Image">
+    <div class="image-container">
+        <div>
+            <h2>Original Image:</h2>
+            <img id="selected-image" src="" alt="Selected Image">
+        </div>
+        <div class="canvas-container">
+            <h2>Detected Objects:</h2>
+            <img id="detected-image" src="" alt="Detected Image">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+    <div>
+        <h2>API Response:</h2>
+        <pre id="api-response"></pre>
     </div>
 
     <script>
-        const uploadForm = document.getElementById('upload-form');
-        const imageInput = document.getElementById('image-input');
-        const detectedImage = document.getElementById('detected-image');
+        function detectObjects() {
+            const imageInput = document.getElementById('image-input');
+            const file = imageInput.files[0];
 
-        uploadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('image', imageInput.files[0]);
+            if (!file) {
+                alert('Please select an image before detecting objects.');
+                return;
+            }
 
-            fetch('/api/detect', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                const url = URL.createObjectURL(blob);
-                detectedImage.src = url;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                const base64img = reader.result.split(',')[1];
+                displayImages(reader.result);
+
+                fetch('/api/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 'image': base64img })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const responseText = JSON.stringify(data, null, 2);
+                    document.getElementById('api-response').textContent = responseText;
+                    drawCircles(data['detections']);
+                })
+                .catch(error => console.error('Error:', error));
+            };
+            reader.onerror = function (error) {
+                console.error('Error:', error);
+            };
+        }
+
+        function displayImages(imageData) {
+            const selectedImage = document.getElementById('selected-image');
+            const detectedImage = document.getElementById('detected-image');
+            selectedImage.src = imageData;
+            detectedImage.src = imageData;
+        }
+
+        function drawCircles(detections) {
+            const detectedImage = document.getElementById('detected-image');
+            const canvas = document.getElementById('canvas');
+            canvas.width = detectedImage.width;
+            canvas.height = detectedImage.height;
+            const ctx = canvas.getContext('2d');
+
+            detections.forEach(detection => {
+                const { yMin, xMin, yMax, xMax } = detection.box;
+                const x = xMin * detectedImage.width;
+                const y = yMin * detectedImage.height;
+                const width = (xMax - xMin) * detectedImage.width;
+                const height = (yMax - yMin) * detectedImage.height;
+
+                ctx.beginPath();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'red';
+                ctx.rect(x, y, width, height);
+                ctx.stroke();
+                ctx.font = '16px Arial';
+                ctx.fillStyle = 'red';
+                ctx.fillText(detection.label + ' (' + (detection.score * 100).toFixed(2) + '%)', x, y - 5);
             });
-        });
+        }
     </script>
 </body>
 </html>
