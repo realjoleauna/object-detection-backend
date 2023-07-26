@@ -23,7 +23,8 @@ def predict(body):
 
 def detect(img):
     image = tf.image.decode_image(img, channels=3)
-    result = model.signatures["default"](img)
+    converted_img = tf.image.convert_image_dtype(image, tf.float32)[tf.newaxis, ...]
+    result = model.signatures["default"](converted_img)
     num_detections = len(result["detection_scores"])
 
     output_dict = {key: value.numpy().tolist() for key, value in result.items()}
