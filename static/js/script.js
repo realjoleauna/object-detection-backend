@@ -8,9 +8,18 @@ const displayImages = (base64img, detections) => {
     img.src = URL.createObjectURL(blob);
     capturedPhoto.innerHTML = '';
     capturedPhoto.appendChild(img);
-
+    
     if (detections) {
-        drawCircles(detections);
+        const canvas = document.getElementById('canvas-overlay');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        img.onload = function () {
+            canvas.width = capturedPhoto.clientWidth;
+            canvas.height = capturedPhoto.clientHeight;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            drawCircles(detections);
+        };
     }
 };
 
