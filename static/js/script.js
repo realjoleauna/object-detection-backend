@@ -1,20 +1,26 @@
+// Obtendo referências dos elementos HTML
 const video = document.getElementById('video');
 const canvasOverlay = document.getElementById('canvas-overlay');
 const capturedPhoto = document.getElementById('captured-photo');
 
+// Função para exibir imagens e detecções
 const displayImages = (base64img, detections) => {
     const img = new Image();
+    
+    // Convertendo a imagem base64 para Blob
     const blob = dataURLtoBlob(`data:image/jpeg;base64,${base64img}`);
     img.src = URL.createObjectURL(blob);
     capturedPhoto.innerHTML = '';
     capturedPhoto.appendChild(img);
-    
+
     if (detections) {
         const canvas = document.getElementById('canvas-overlay');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Aguardando o carregamento da imagem antes de desenhar os círculos vermelhos
         img.onload = function () {
+            // Configurando o tamanho do canvas para ser igual ao da foto capturada
             canvas.width = capturedPhoto.clientWidth;
             canvas.height = capturedPhoto.clientHeight;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -23,15 +29,17 @@ const displayImages = (base64img, detections) => {
     }
 };
 
+// Iniciando a câmera ao carregar a página
 const startCamera = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
     } catch (err) {
-        console.error('Error accessing webcam:', err);
+        console.error('Erro ao acessar a webcam:', err);
     }
 };
 
+// Função para converter a imagem de base64 para Blob
 const dataURLtoBlob = (dataURL) => {
     const arr = dataURL.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];
@@ -44,39 +52,42 @@ const dataURLtoBlob = (dataURL) => {
     return new Blob([u8arr], { type: mime });
 };
 
+// Função para capturar a imagem da câmera e enviá-la para o servidor
 const captureImage = () => {
     if (canvasOverlay) {
         const ctx = canvasOverlay.getContext('2d');
         ctx.drawImage(video, 0, 0, canvasOverlay.width, canvasOverlay.height);
         const dataURL = canvasOverlay.toDataURL();
-        const base64img = dataURL.split(',')[1]; // Extract base64 image string
+        const base64img = dataURL.split(',')[1]; // Extraindo a string da imagem em base64
         sendImageToServer(base64img);
     }
 };
 
+// Função para enviar a imagem para o servidor e receber as detecções
 const sendImageToServer = (base64img) => {
     fetch('/api/detect', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
+            'Content-Type': 'application/json' // Definindo o tipo de conteúdo como JSON
         },
-        body: JSON.stringify({ 'image': base64img }) // Send image as a JSON object
+        body: JSON.stringify({ 'image': base64img }) // Enviando a imagem em formato JSON
     })
     .then(response => response.json())
     .then(data => {
         const responseText = JSON.stringify(data, null, 2);
         console.log(responseText);
-        // Update the UI with the detected image (if applicable)
+        // Atualizando a interface com a imagem detectada (se aplicável)
         if (data && data['detections']) {
             displayImages(base64img, data['detections']);
         } else {
-            // If no image is detected, display an error message
-            capturedPhoto.innerHTML = '<p>No object detected in the captured photo.</p>';
+            // Se nenhuma imagem for detectada, exibir uma mensagem de erro
+            capturedPhoto.innerHTML = '<p>Nenhum objeto detectado na foto capturada.</p>';
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('Erro:', error));
 };
 
+// Função para desenhar os círculos vermelhos em torno dos objetos detectados
 const drawCircles = (detections) => {
     const canvas = document.getElementById('canvas-overlay');
     const ctx = canvas.getContext('2d');
@@ -100,5 +111,5 @@ const drawCircles = (detections) => {
     });
 };
 
-// Start the camera when the page loads
+// Iniciando a câmera ao carregar a página
 startCamera();
