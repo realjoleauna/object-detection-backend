@@ -34,7 +34,33 @@ const captureImage = () => {
     if (canvasOverlay) {
         const ctx = canvasOverlay.getContext('2d');
         ctx.drawImage(video, 0, 0, canvasOverlay.width, canvasOverlay.height);
+        const dataURL = canvasOverlay.toDataURL();
+        const base64img = dataURL.split(',')[1]; // Extract base64 image string
+        sendImageToServer(base64img);
     }
+};
+
+const sendImageToServer = (base64img) => {
+    fetch('/api/detect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Set the content type to JSON
+        },
+        body: JSON.stringify({ 'image': base64img }) // Send image as a JSON object
+    })
+    .then(response => response.json())
+    .then(data => {
+        const responseText = JSON.stringify(data, null, 2);
+        console.log(responseText);
+        // Update the UI with the detected image (if applicable)
+        if (data && data['image']) {
+            displayImages(data['image']);
+        } else {
+            // If no image is detected, display an error message
+            capturedPhoto.innerHTML = '<p>No object detected in the captured photo.</p>';
+        }
+    })
+    .catch(error => console.error('Error:', error));
 };
 
 // Start the camera when the page loads
