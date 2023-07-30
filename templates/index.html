@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object Detection App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres para UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura a escala inicial para dispositivos móveis -->
+    <title>Object Detection App</title> <!-- Título da página -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Inclui o arquivo CSS externo -->
 </head>
+
 <body>
-    <h1>Object Detection App</h1>
+    <h1>Object Detection App</h1> <!-- Cabeçalho principal da aplicação -->
+
+    <!-- Container principal -->
     <div class="container">
+        <!-- Moldura para exibir o vídeo da câmera -->
         <div class="camera-frame">
-            <video id="video" autoplay></video>
+            <video id="video" autoplay></video> <!-- Elemento de vídeo para exibir o fluxo da câmera -->
         </div>
+
+        <!-- Moldura para exibir a foto capturada e a sobreposição de objetos detectados -->
         <div class="captured-frame">
-            <canvas id="canvas-overlay" width="480" height="360"></canvas>
+            <canvas id="canvas-overlay" width="480" height="360"></canvas> <!-- Elemento canvas para a sobreposição dos objetos -->
             <div id="captured-photo" class="captured-photo-placeholder">
-                <p>No photo captured</p>
+                <p>No photo captured</p> <!-- Parágrafo exibido quando nenhuma foto é capturada -->
             </div>
         </div>
     </div>
+
+    <!-- Botão para capturar a foto e iniciar a detecção -->
     <button id="capture-btn" onclick="captureImage()">Take a Photo and Detect</button>
-    <!-- <button id="capture-btn" onclick="captureImage()">Take a Photo</button>
-    <button id="capture-btn" onclick="detectImage()">Detect objects</button> -->
+
+    <!-- Script JavaScript que controla a funcionalidade da aplicação -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>
