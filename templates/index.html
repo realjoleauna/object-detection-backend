@@ -7,17 +7,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <h1>Object Detection App</h1>
     <div class="container">
-        <div class="camera-container">
-            <video id="video" width="640" height="480" autoplay></video>
-            <canvas id="canvas-overlay" width="640" height="480"></canvas>
-            <button id="take-photo" onclick="captureImage()">Take a Photo</button>
+        <div class="camera-frame">
+            <video id="video" autoplay></video>
         </div>
-        <div class="captured-container">
-            <h2>Detected Objects</h2>
-            <div id="captured-photo"></div>
+        <div class="captured-frame">
+            <canvas id="canvas-overlay" width="320" height="240"></canvas>
+            <div id="captured-photo" class="captured-photo-placeholder">
+                <p>No photo captured</p>
+            </div>
         </div>
     </div>
+    <button id="capture-btn" onclick="captureImage()">Take a Photo and Detect</button>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
