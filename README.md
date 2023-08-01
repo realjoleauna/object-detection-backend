@@ -27,7 +27,11 @@ python app.py
 - `app.py`: Contém a lógica do aplicativo Flask para lidar com as solicitações de API e renderizar a página inicial.
 - `index.html`: Página HTML que contém o formulário para fazer upload da imagem e exibir as imagens detectadas.
 - `templates/`: Pasta contendo os modelos HTML usados no aplicativo.
+- `static/`: Pasta contendo arquivos estáticos usados no aplicativo, como CSS e JavaScript.
+    - `css/`: Pasta contendo o arquivo de estilo `styles.css`.
+    - `js/`: Pasta contendo o arquivo de script `script.js`.
 - `requirements.txt`: Arquivo que lista todas as dependências necessárias do Python.
+
 
 ## Funcionamento
 

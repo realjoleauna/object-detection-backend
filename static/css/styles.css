@@ -1,0 +1,91 @@
+/* Estilos para o corpo do documento */
+body {
+    font-family: "Helvetica", sans-serif; /* Define a fonte utilizada no documento */
+    margin: 0; /* Remove margens padrão */
+    padding: 0; /* Remove preenchimento padrão */
+}
+
+/* Estilos para o cabeçalho h1 */
+h1 {
+    text-align: center; /* Centraliza o texto */
+    padding: 20px; /* Adiciona preenchimento ao redor do cabeçalho */
+}
+
+/* Estilos para o container principal */
+.container {
+    display: flex; /* Organiza os elementos em uma linha horizontal */
+    justify-content: space-between; /* Distribui o espaço entre os elementos */
+    max-width: 1000px; /* Define a largura máxima do container */
+    margin: 0 auto; /* Centraliza o container horizontalmente na página */
+    padding: 20px; /* Adiciona preenchimento ao redor do container */
+}
+
+/* Estilos para a moldura da câmera e da foto capturada */
+.camera-frame,
+.captured-frame {
+    width: 48%; /* Largura ajustada para 48% do container */
+    display: flex; /* Organiza os elementos em uma linha horizontal */
+    justify-content: center; /* Centraliza os elementos horizontalmente */
+    align-items: center; /* Centraliza os elementos verticalmente */
+    border: 2px solid #333; /* Adiciona uma borda de 2px sólida na cor cinza escura */
+    border-radius: 10px; /* Adiciona bordas arredondadas */
+    overflow: hidden; /* Oculta qualquer conteúdo excedente */
+    position: relative; /* Permite o posicionamento absoluto de elementos internos */
+}
+
+/* Estilos exclusivos para a moldura da câmera */
+.camera-frame {
+    margin-right: 2%; /* Adiciona uma margem à direita para separar da moldura da foto capturada */
+}
+
+/* Estilos para o vídeo, canvas e foto capturada */
+video,
+#canvas-overlay,
+#captured-photo {
+    width: 100%; /* Define a largura para ocupar 100% do espaço disponível */
+    height: 100%; /* Define a altura para ocupar 100% do espaço disponível */
+    object-fit: cover; /* Mantém a proporção da imagem e cobre todo o elemento */
+}
+
+/* Estilos para a div da foto capturada */
+.captured-photo {
+    display: flex; /* Organiza o conteúdo em uma linha horizontal */
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+    height: 100%; /* Garante que a div tenha uma proporção quadrada */
+    position: relative; /* Permite o posicionamento absoluto dos elementos internos */
+}
+
+/* Estilos para o parágrafo dentro da div da foto capturada */
+#captured-photo p {
+    margin: 0; /* Remove a margem padrão */
+    position: absolute; /* Permite o posicionamento absoluto do parágrafo */
+    top: 50%; /* Define a posição vertical como o centro do elemento pai */
+    left: 50%; /* Define a posição horizontal como o centro do elemento pai */
+    transform: translate(-50%, -50%); /* Centraliza o parágrafo em relação ao centro do elemento pai */
+}
+
+/* Estilos para o canvas de sobreposição */
+#canvas-overlay {
+    position: absolute; /* Permite o posicionamento absoluto do canvas */
+    top: 0; /* Posiciona o canvas no topo do elemento pai */
+    left: 0; /* Posiciona o canvas à esquerda do elemento pai */
+    z-index: 1; /* Aumenta o z-index para posicioná-lo acima de outros elementos */
+}
+
+/* Estilos para o botão de captura */
+#capture-btn {
+    display: block; /* Exibe o botão como um bloco para ocupar a largura total disponível */
+    margin: 20px auto; /* Adiciona margem nas laterais e centraliza o botão horizontalmente */
+    padding: 10px 20px; /* Adiciona preenchimento nas laterais do botão */
+    background-color: #333; /* Define a cor de fundo do botão */
+    color: white; /* Define a cor do texto do botão */
+    border: none; /* Remove a borda do botão */
+    border-radius: 5px; /* Adiciona bordas arredondadas */
+    font-size: 16px; /* Define o tamanho da fonte do texto do botão */
+    cursor: pointer; /* Altera o cursor para uma mão ao passar sobre o botão */
+}
+
+/* Estilos para o botão de captura quando o cursor está sobre ele */
+#capture-btn:hover {
+    background-color: #555; /* Define a cor de fundo do botão ao passar o cursor

@@ -1,124 +1,37 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Object Detection App</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-        }
-
-        .image-container {
-            display: flex;
-            margin-top: 20px;
-        }
-
-        .image-container img {
-            max-width: 50%;
-        }
-
-        .canvas-container {
-            position: relative;
-            max-width: 50%;
-        }
-
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres para UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura a escala inicial para dispositivos móveis -->
+    <title>Object Detection App</title> <!-- Título da página -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> <!-- Inclui o arquivo CSS externo -->
 </head>
+
 <body>
-    <h1>Object Detection App</h1>
-    <form id="upload-form" enctype="multipart/form-data">
-        <input type="file" id="image-input" accept="image/*">
-        <input type="button" value="Detect Objects" onclick="detectObjects()">
-    </form>
-    <div class="image-container">
-        <div>
-            <h2>Original Image:</h2>
-            <img id="selected-image" src="" alt="Selected Image">
+    <h1>Object Detection App</h1> <!-- Cabeçalho principal da aplicação -->
+
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Moldura para exibir o vídeo da câmera -->
+        <div class="camera-frame">
+            <video id="video" autoplay></video> <!-- Elemento de vídeo para exibir o fluxo da câmera -->
         </div>
-        <div class="canvas-container">
-            <h2>Detected Objects:</h2>
-            <img id="detected-image" src="" alt="Detected Image">
-            <canvas id="canvas"></canvas>
+
+        <!-- Moldura para exibir a foto capturada e a sobreposição de objetos detectados -->
+        <div class="captured-frame">
+            <canvas id="canvas-overlay" width="480" height="360"></canvas> <!-- Elemento canvas para a sobreposição dos objetos -->
+            <div id="captured-photo" class="captured-photo-placeholder">
+                <p>No photo captured</p> <!-- Parágrafo exibido quando nenhuma foto é capturada -->
+            </div>
         </div>
     </div>
-    <div>
-        <h2>API Response:</h2>
-        <pre id="api-response"></pre>
-    </div>
 
-    <script>
-        function detectObjects() {
-            const imageInput = document.getElementById('image-input');
-            const file = imageInput.files[0];
+    <!-- Botão para capturar a foto e iniciar a detecção -->
+    <button id="capture-btn" onclick="captureImage()">Take a Photo and Detect</button>
 
-            if (!file) {
-                alert('Please select an image before detecting objects.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                const base64img = reader.result.split(',')[1];
-                displayImages(reader.result);
-
-                fetch('/api/detect', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 'image': base64img })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const responseText = JSON.stringify(data, null, 2);
-                    document.getElementById('api-response').textContent = responseText;
-                    drawCircles(data['detections']);
-                })
-                .catch(error => console.error('Error:', error));
-            };
-            reader.onerror = function (error) {
-                console.error('Error:', error);
-            };
-        }
-
-        function displayImages(imageData) {
-            const selectedImage = document.getElementById('selected-image');
-            const detectedImage = document.getElementById('detected-image');
-            selectedImage.src = imageData;
-            detectedImage.src = imageData;
-        }
-
-        function drawCircles(detections) {
-            const detectedImage = document.getElementById('detected-image');
-            const canvas = document.getElementById('canvas');
-            canvas.width = detectedImage.width;
-            canvas.height = detectedImage.height;
-            const ctx = canvas.getContext('2d');
-
-            detections.forEach(detection => {
-                const { yMin, xMin, yMax, xMax } = detection.box;
-                const x = xMin * detectedImage.width;
-                const y = yMin * detectedImage.height;
-                const width = (xMax - xMin) * detectedImage.width;
-                const height = (yMax - yMin) * detectedImage.height;
-
-                ctx.beginPath();
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = 'red';
-                ctx.rect(x, y, width, height);
-                ctx.stroke();
-                ctx.font = '16px Arial';
-                ctx.fillStyle = 'red';
-                ctx.fillText(detection.label + ' (' + (detection.score * 100).toFixed(2) + '%)', x, y - 5);
-            });
-        }
-    </script>
+    <!-- Script JavaScript que controla a funcionalidade da aplicação -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>
